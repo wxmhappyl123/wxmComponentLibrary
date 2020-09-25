@@ -1,0 +1,294 @@
+<template>
+  <div :style="`height: ${scVideoHeight}; position: relative;`" class="hls-video-content">
+    <video width="100%" height="100%"
+           :class="{'player' : isLive}"
+           muted
+           :id="videoId"
+           :ref="'video'+videoId"
+           :autoplay="scAutoplay"
+           :controls="isProcess"
+           :poster="posterImg"
+           x-webkit-airplay="true"
+           x5-video-player-fullscreen="true"
+           :playsinline="false"
+           webkit-playsinline
+           x5-video-player-typ="h5">
+    </video>
+    <div class="video-controls-content">
+      <div class="play-btn">
+          <span class="iconfont iconzanting1 pause" @click="videoPause" v-if="!isPause && !isLive && !isProcess"></span>
+          <span class="iconfont iconbofang play" v-if="isPause  && !isLive && !isProcess" @click="videoPlay"></span>
+      </div>
+      <div class="other-btn">
+        <span class="full-screen iconfont iconjietu2" title="截图" v-if="screenShot" @click="screenShotEnv('png')"></span>
+        <br>
+        <span class="full-screen iconfont iconquanping1" title="全屏" @click="fullScreen"></span>
+      </div>
+    </div>
+  </div>
+</template>
+<script>
+  import Hls from 'hls.js'
+  export default {
+    name: 'myPlayer',
+    data () {
+      return{
+        myPlayer: null,
+        videoHls: null,
+        isPause: false,//是否是暂停状态
+      }
+    },
+    props: {
+      videoId: {
+        type: String,
+        default: ''
+      },
+      // 自动播放
+      scAutoplay: {
+        type: Boolean,
+        default: true
+      },
+      // 视屏宽度
+      scVideoWidth:{
+        type: String,
+        default: '100%'
+      },
+      // 视屏高度
+      scVideoHeight: {
+        type: String,
+        default: '100%'
+      },
+      // 是否显示进度条
+      isProcess: {
+        type: Boolean,
+        default: false
+      },
+      // 视屏地址
+      scVideoSrc: {
+        type: String,
+        default: ''
+      },
+      //是否是直播
+      isLive: {
+        type: Boolean,
+        default: true
+      },
+      //是否截图
+      screenShot: {
+        type: Boolean,
+        default: true
+      },
+      posterImg:{
+        type: String,
+        default: ''
+      }
+    },
+    watch: {
+      videoHls () {
+        // console.log(this.videoHls)
+      }
+    },
+    mounted(){
+      this.watchVideo()
+    },
+    methods: {
+      /**
+       * 监听是否播放失败
+       */
+      watchVideo() {
+        let that = this
+        var elevideo = document.getElementById(this.videoId);
+        elevideo.addEventListener('ended', function () { //结束
+          console.log("播放结束");
+          that.isPause = true
+        }, false)
+      },
+      /**
+       * 截图
+       *@param  fileName 需要保存的格式
+       */
+      screenShotEnv(fileName) {
+        let fileType = fileName ? fileName : "png";  // 如果文件名中没有带后缀，默认使用
+        // let video = document.querySelector('video');  // 找到需要截图的video标签
+        let video = document.getElementById(this.videoId);  // 找到需要截图的video标签
+        let canvas = window.canvas = document.createElement("canvas"); // 创建canvas
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+        canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);  // 图片大小和视频分辨率一致
+        let strDataURL = canvas.toDataURL("image/" + fileType);   // canvas中video中取一帧图片并转成dataURL
+        let arr = strDataURL.split(','),
+          mime = arr[0].match(/:(.*?);/)[1],
+          bstr = atob(arr[1]),
+          n = bstr.length,
+          u8arr = new Uint8Array(n);
+        while (n--) {
+          u8arr[n] = bstr.charCodeAt(n);
+        }
+        let blob = new Blob([u8arr], {
+          type: mime
+        });
+        let url = window.URL.createObjectURL(blob);
+        let a = document.createElement('a');
+        a.style.display = 'none';
+        a.href = url;
+        a.download = fileName;
+        document.body.appendChild(a);
+        a.click();
+        setTimeout(function () {
+          document.body.removeChild(a);
+          window.URL.revokeObjectURL(url);
+        }, 1000);
+      },
+      /**
+       * 全屏
+       */
+      fullScreen() {
+        let ele = document.getElementById(this.videoId);
+        if (ele .requestFullscreen) {
+          ele .requestFullscreen();
+        } else if (ele .mozRequestFullScreen) {
+          ele .mozRequestFullScreen();
+        } else if (ele .webkitRequestFullScreen) {
+          ele .webkitRequestFullScreen();
+        }
+      },
+      /**
+       * 初始化 video
+       */
+      initVideo() {
+        console.log('开始初始化')
+        let viodeType = ['mp4', 'ogg']
+        //判断是都支持Hls和视频是否为流地址
+        if(Hls.isSupported() && viodeType.indexOf(this.scVideoSrc.substring(this.scVideoSrc.lastIndexOf(".") + 1)) == -1) {
+          let video = document.getElementById(this.videoId)
+          this.videoHls = new Hls()
+          this.videoHls.loadSource(this.scVideoSrc)
+          this.videoHls.attachMedia(video)
+          console.log('==========')
+          //加载成功
+          this.videoHls.on(Hls.Events.MANIFEST_PARSED,function() {
+            if(this.scAutoplay || this.isLive){
+              video.play()
+            }
+          })
+          //记载失败
+          this.videoHls.on(Hls.Events.ERROR, (event, data) => {
+            console.log('加载失败')
+          })
+        }else {
+          let that = this
+          that.$refs['video'+that.videoId].src = that.scVideoSrc
+          that.$refs['video'+that.videoId].addEventListener('loadedmetadata',function() {
+            if(that.scAutoplay){
+              that.$refs['video'+that.videoId].play()
+            }
+          })
+
+        }
+      },
+      /**
+       * 销毁video
+       */
+      destroyHls() {
+        this.videoHls.destroy()
+      },
+      /**
+       * 暂停
+       */
+      videoPause() {
+        console.log('暂停====')
+        this.$refs['video'+this.videoId].pause()
+        this.isPause = true
+      },
+      /**
+       * 播放
+       */
+      videoPlay() {
+        console.log('播放====')
+        this.$refs['video'+this.videoId].play()
+        this.isPause = false
+      }
+    },
+    created() {
+    }
+  }
+</script>
+<style lang="less" scoped>
+  /deep/.video-js{
+    height: 100% !important;
+    video{
+      height: 100% !important;
+    }
+  }
+  .full-screen{
+    color: white;
+    /*right: 0.5rem;*/
+    font-size: 1rem;
+    cursor: pointer;
+    z-index: 12;
+    /*bottom: 3px;*/
+  }
+  .iconjietu{
+    /*right: 2rem;*/
+  }
+  // 影藏控制条
+  .player::-webkit-media-controls{
+    display:none !important;
+  }
+  video::-webkit-media-controls{
+    z-index: 100;
+    height: 2rem;
+    line-height: 10px;
+    display: flex;
+    justify-content: space-between;
+  }
+  video::-webkit-media-controls-fullscreen-button {
+    display: none;
+  }
+  video{
+    background: #000;
+  }
+  .video-controls-content{
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    /*top: -100%;*/
+    top: 0;
+    left: 0;
+    color: white;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    opacity: 0;
+    transition: linear .5s;
+    /* Safari */
+    -webkit-transition: linear .5s;
+    z-index: 999;
+    .play-btn{
+      width: 80%;
+      text-align: center;
+      display: -webkit-box;
+      -webkit-box-orient: horizontal;
+      -webkit-box-pack: center;
+      -webkit-box-align: center;
+      .iconfont{
+        font-size: 2rem;
+        margin-left: 20%;
+      }
+    }
+    .other-btn{
+      /*background: rgba(0, 0, 0, 0.3);*/
+      text-align: center;
+      overflow: hidden;
+      display: -webkit-box;
+      -webkit-box-orient: horizontal;
+      -webkit-box-pack: center;
+      -webkit-box-align: center;
+      line-height: 1.5rem;
+    }
+
+  }
+  .hls-video-content:hover>.video-controls-content{
+    opacity: 1;
+  }
+</style>

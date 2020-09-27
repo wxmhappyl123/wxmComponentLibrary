@@ -83,11 +83,8 @@
            this.videoData = this.videoList.slice(0,this.splitNum)
          }else {
            this.videoData = this.videoList
-           console.log('传过来的video===',this.videoList.length)
-           console.log('传过来的video===',this.splitNum - this.videoList.length)
            let num = this.splitNum - this.videoList.length
            for(let i = 0; i<num; i++){
-             console.log(i)
              let obj = {
                url: ''
              }

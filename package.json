@@ -1,7 +1,7 @@
 {
   "name": "wxm-component-library",
-  "version": "0.1.1",
-  "description": "Used for magic mirror video playback plug-in download",
+  "version": "0.1.5",
+  "description": "Used for video playback plug-in download",
   "private": false,
   "keywords": [
     "player",

@@ -1,6 +1,6 @@
 // 导入视频播放组件
 import myPlayer from './myPlayer'
-import mySplitScreenVideo from './myPlayer'
+import mySplitScreenVideo from './splitScreenVideo'
 
 // 存储组件列表
 const components = [

@@ -6,9 +6,9 @@ import ElementUI from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
 Vue.config.productionTip = false
 Vue.use(ElementUI)
-import myPlayer from '../packages/myPlayer'
+import myPlayer from '../packages/index'
 Vue.use(myPlayer)
-import mySplitScreenVideo from '../packages/myPlayer'
+import mySplitScreenVideo from '../packages/index'
 Vue.use(mySplitScreenVideo)
 new Vue({
   router,

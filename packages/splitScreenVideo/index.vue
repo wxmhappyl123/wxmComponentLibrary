@@ -16,7 +16,7 @@
   </div>
 </template>
 <script>
-  import {filterSplitClass} from './filter'
+  import {filterSplitClass} from '../myPlayer/filter'
   export default {
     name: 'mySplitScreenVideo',
     props: {
@@ -113,5 +113,5 @@
   }
 </script>
 <style lang="less" scoped>
-  @import "player.less";
+  @import "../myPlayer/player.less";
 </style>

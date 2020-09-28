@@ -14,6 +14,7 @@
            webkit-playsinline
            x5-video-player-typ="h5">
     </video>
+    <div class="video-name" :class="videoNamePosition ? videoNamePosition : 'top'" v-if="videoName && isvVideoName">{{videoName}}</div>
     <div class="video-controls-content">
       <div class="play-btn">
           <span class="iconfont iconzanting1 pause" @click="videoPause" v-if="!isPause && !isLive && !isProcess"></span>
@@ -81,7 +82,19 @@
       posterImg:{
         type: String,
         default: ''
-      }
+      },
+      videoName: {
+        type: String,
+        default: ''
+      },
+      isvVideoName: {
+        type: Boolean,
+        default: false
+      },
+      videoNamePosition: {
+        type: String,
+        default: 'top'
+      },
     },
     watch: {
       videoHls () {
@@ -290,5 +303,44 @@
   }
   .hls-video-content:hover>.video-controls-content{
     opacity: 1;
+  }
+  .video-name{
+    color: white;
+    background: rgba(0, 0, 0, 0.7);
+    text-align: left;
+    position: absolute;
+  }
+  .top{
+    width: 100%;
+    height: 30px;
+    line-height: 30px;
+    left: 0;
+    top: 0;
+  }
+  .left{
+    width: 30px;
+    height: 100%;
+    left: 0;
+    top: 0;
+    text-align: center;
+    -webkit-writing-mode: vertical-lr;
+    writing-mode: vertical-lr;
+  }
+  .bottom{
+    width: 100%;
+    height: 30px;
+    line-height: 30px;
+    left: 0;
+    bottom: 0;
+    text-align: center;
+  }
+  .right{
+    width: 30px;
+    height: 100%;
+    right: 0;
+    top: 0;
+    text-align: center;
+    -webkit-writing-mode: vertical-lr;
+    writing-mode: vertical-lr;
   }
 </style>

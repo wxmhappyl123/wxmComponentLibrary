@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div style="height: 300px;width: 500px">
         <myPlayer
                 id="1234"
                 ref="video"
@@ -8,6 +8,9 @@
                 :scAutoplay="true"
                 :isLive="true"
                 :isProcess="false"
+                :videoName="'测试设备'"
+                :isvVideoName="true"
+                :videoNamePosition="'right'"
                 videoId="video1234"
         ></myPlayer>
     </div>
@@ -20,14 +23,6 @@
         },
         mounted() {
             this.$refs.video.initVideo()
-            let params = {
-                areaId: 1264416533667684354
-            }
-            let header = {
-                from: 'WEB',
-                token: 'eyJhbGciOiJIUzI1NiJ9.eyJzbiI6IjE2MDA5MTA4NDQ5MTMiLCJ1c2VySWQiOjEyNjQ3ODAyMTk3MjkwOTI2MTAsImlhdCI6MTYwMDkxMDg0OSwiZXhwIjoxNjAxNTE1NjQ5fQ.uP1AroEF9FYGdyUKleYSxNma4qjL_QXQJDPo9EmeIks'
-            }
-            this.downLoadByUrl('GET','/dogs/dogs/manures/download', '知识',params, 'xls', header)
         },
     }
 </script>

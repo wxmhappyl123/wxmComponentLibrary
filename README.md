@@ -67,6 +67,26 @@ import {myPlayer} from 'wxm-component-library';
 - 默认值：无
 - 描述：非毕传项
 
+### 名称
+- 配置项：`videoName`
+- 类型: String
+- 默认值：无
+- 描述：非毕传项
+
+### 是否显示名称
+- 配置项：`isvVideoName`
+- 类型: Boolean
+- 默认值：false
+- 描述：非毕传项
+
+### 名称显示的位置
+- 配置项：`videoNamePosition`
+- 类型: String
+- 默认值：top
+- 描述：非毕传项
+- 参考值：top | left | right | bottom
+- 描述：传错默认在上方，不传也默认在上方
+
 ### 初始化调用 initVideo方法
 ```html
 <myPlayer

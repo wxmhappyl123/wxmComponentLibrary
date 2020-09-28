@@ -11,6 +11,9 @@
         :screenShot="screenShot"
         :isProcess="isProcess"
         :videoId="`video2${index}`"
+        :videoName="videoName"
+        :isvVideoName="isvVideoName"
+        :videoNamePosition="videoNamePosition"
       ></myPlayer>
     </div>
   </div>
@@ -55,6 +58,18 @@
       screenShot: {
         type: Boolean,
         default: true
+      },
+      videoName: {
+        type: String,
+        default: ''
+      },
+      isvVideoName: {
+        type: Boolean,
+        default: false
+      },
+      videoNamePosition: {
+        type: String,
+        default: 'top'
       },
     },
     data (){

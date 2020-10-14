@@ -9,6 +9,7 @@
         :scAutoplay="scAutoplay"
         :isLive="isLive"
         :screenShot="screenShot"
+        :btnList="btnList"
         :isProcess="isProcess"
         :videoId="`video2${index}`"
         :videoName="videoName"
@@ -71,6 +72,12 @@
         type: String,
         default: 'top'
       },
+      btnList: {
+        type: Array,
+        default: function () {
+          return
+        }
+      }
     },
     data (){
       return{

@@ -23,7 +23,10 @@
       <div class="other-btn">
         <span class="full-screen iconfont iconjietu2" title="截图" v-if="screenShot" @click="screenShotEnv('png')"></span>
         <br>
-        <span class="full-screen iconfont iconquanping1" title="全屏" @click="fullScreen"></span>
+        <span class="full-screen iconfont iconquanping1" title="全屏" @click="fullScreen"></span> <br>
+          <span v-for="(item, index) in btnList" v-if="btnList.length > 0" :key="index" @click="clickBtn(item)">
+               <span class="full-screen other-btn-item">{{item.txt}}</span> <br>
+          </span>
       </div>
     </div>
   </div>
@@ -95,6 +98,12 @@
         type: String,
         default: 'top'
       },
+        btnList: {
+          type: Array,
+           default: function () {
+               return
+           }
+        }
     },
     watch: {
       videoHls () {
@@ -105,6 +114,13 @@
       this.watchVideo()
     },
     methods: {
+        /**
+         * 自定义按钮点击事件
+         * @param item
+         */
+        clickBtn(item) {
+           this.$emit(item.type, this.videoId, this.scVideoSrc)
+        },
       /**
        * 监听是否播放失败
        */
@@ -227,6 +243,9 @@
   }
 </script>
 <style lang="less" scoped>
+    .other-btn-item{
+        font-size: 12px !important;
+    }
   /deep/.video-js{
     height: 100% !important;
     video{
@@ -297,7 +316,7 @@
       -webkit-box-orient: horizontal;
       -webkit-box-pack: center;
       -webkit-box-align: center;
-      line-height: 1.5rem;
+      line-height: 1rem;
     }
 
   }

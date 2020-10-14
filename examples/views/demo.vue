@@ -5,9 +5,11 @@
                         ref="splitScreen"
                         :videoList="videoList"
                         :splitNum="9"
+                        :btnList="btnList"
                         :scAutoplay="false"
                         :isLive="false"
                         :screenShot="false"
+                        videoNamePosition="top"
                         :isProcess="true"
                 ></mySplitScreenVideo>
             </div>
@@ -24,6 +26,20 @@
         },
         data () {
             return{
+                btnList: [
+                    {
+                        type: 'cloudControl',
+                        txt: '云台控制'
+                    },
+                    {
+                        type: 'playBack',
+                        txt: '录像回放'
+                    },
+                    {
+                        type: 'checkDetail',
+                        txt: '查看详情'
+                    }
+                ],
                 dialogVisible: false,
                 videoList: [
                     {

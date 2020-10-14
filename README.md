@@ -203,6 +203,49 @@ this.$nextTick(() => {
           this.$refs.splitScreen.destroyVideo()
         })
 ````
+
+### 自定义按钮
+- 配置项：`btnList`
+- 类型: Array
+- 默认值：无
+- 描述：非毕传项, 返回事件为传入的type
+````
+[
+                    {
+                        type: 'cloudControl',
+                        txt: '云台控制'
+                    },
+                    {
+                        type: 'playBack',
+                        txt: '录像回放'
+                    },
+                    {
+                        type: 'checkDetail',
+                        txt: '查看详情'
+                    }
+                ]
+                
+                 <myPlayer
+                                id="1234"
+                                ref="video"
+                                scVideoSrc="http://182.145.195.238:1936/hls/08103021122A63A2E00.m3u8"
+                                scVideoHeight="100%"
+                                @cloudControl="cloudControl"
+                                :scAutoplay="true"
+                                :isLive="true"
+                                :isProcess="false"
+                                :btnList="btnList"
+                                :videoName="'测试设备'"
+                                :isvVideoName="true"
+                                :videoNamePosition="'top'"
+                                videoId="video1234"
+                        ></myPlayer>
+                        
+                        
+                        cloudControl(id, src) {
+                                        console.log('点击的按钮', id, src)
+                                    },
+````
 # downLoadByUrl API 文件下载
 #### 全局注册了  wxm-component-library 后再需要的地方直接调用
 -描述: 此下载方法支持post，get，

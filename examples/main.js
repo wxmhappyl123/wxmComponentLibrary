@@ -7,8 +7,12 @@ import 'element-ui/lib/theme-chalk/index.css'
 Vue.config.productionTip = false
 Vue.use(ElementUI)
 import {downLoadByUrl} from '../packages/index'
+import {myEncryption} from '../packages/index'
+import {myDecrypt} from '../packages/index'
 // 把全局js挂接到vue原型上
 Vue.prototype.downLoadByUrl = downLoadByUrl
+Vue.prototype.myEncryption = myEncryption
+Vue.prototype.myDecrypt = myDecrypt
 import myPlayer from '../packages/index'
 Vue.use(myPlayer)
 import mySplitScreenVideo from '../packages/index'

@@ -1,6 +1,6 @@
 {
   "name": "wxm-component-library",
-  "version": "0.1.10",
+  "version": "0.1.11",
   "description": "Used for video playback plug-in download",
   "private": false,
   "keywords": [
@@ -20,6 +20,7 @@
   },
   "dependencies": {
     "core-js": "^3.6.5",
+    "crypto-js": "^4.0.0",
     "element-ui": "^2.13.2",
     "hls.js": "^0.14.12",
     "vue": "^2.6.11",

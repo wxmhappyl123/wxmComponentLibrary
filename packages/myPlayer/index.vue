@@ -33,15 +33,15 @@
 </template>
 <script>
   import Hls from 'hls.js'
-  export default {
-    name: 'myPlayer',
-    data () {
-      return{
-        myPlayer: null,
-        videoHls: null,
-        isPause: false,//是否是暂停状态
-      }
-    },
+    export default {
+      name: 'myPlayer',
+      data () {
+        return{
+          myPlayer: null,
+          videoHls: null,
+          isPause: false,//是否是暂停状态
+        }
+      },
     props: {
       videoId: {
         type: String,
@@ -193,16 +193,17 @@
           this.videoHls = new Hls()
           this.videoHls.loadSource(this.scVideoSrc)
           this.videoHls.attachMedia(video)
-          console.log('==========')
           //加载成功
           this.videoHls.on(Hls.Events.MANIFEST_PARSED,function() {
             if(this.scAutoplay || this.isLive){
               video.play()
+              this.$emit('initSuccess', this.videoHls)
             }
           })
           //记载失败
           this.videoHls.on(Hls.Events.ERROR, (event, data) => {
             console.log('加载失败')
+            this.$emit('initFail', this.videoHls)
           })
         }else {
           let that = this

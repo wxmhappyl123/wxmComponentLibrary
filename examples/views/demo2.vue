@@ -1,26 +1,33 @@
 <template>
     <div style="height: 300px;width: 500px">
         <myPlayer
+                @initSuccess="initSuccess"
                 id="1234"
                 ref="video"
-                scVideoSrc="http://182.145.195.238:1936/hls/08103021122A63A2E00.m3u8"
+                scVideoSrc="http://182.145.195.238:1936/hls/1010344EFBF7415B800.m3u8"
                 scVideoHeight="100%"
                 @cloudControl="cloudControl"
+                @leaveLoaded="videoPlaying"
                 :scAutoplay="true"
-                :isLive="true"
-                :isProcess="false"
-                :btnList="btnList"
+                :isLive="false"
+                @initFail="initFail"
+                :isProcess="true"
                 :videoName="'测试设备'"
                 :isvVideoName="true"
                 :videoNamePosition="'top'"
                 videoId="video1234"
-        ></myPlayer>
+        >
+            <template #errorImg>
+                <img src="../../examples/assets/logo.png" alt="errorImg" width="80px" height="80px">
+            </template>
+        </myPlayer>
     </div>
 </template>
 <script>
     export default {
         data () {
             return {
+                count: 0,
                 btnList: [
                     {
                         type: 'cloudControl',
@@ -37,11 +44,26 @@
                 ]
             }
         },
+        watch: {
+            count() {
+                console.log('count---',this.count)
+            }
+        },
         mounted() {
             this.$refs.video.initVideo()
             this.getWord()
         },
         methods: {
+            videoPlaying() {
+                console.log('返回值====', this.count++)
+              this.count = this.count++
+            },
+            initSuccess(e) {
+               console.log('chenggong===== ', e)
+            },
+            initFail(e) {
+                console.log('失败=====++++++++++++++ ', e)
+            },
             cloudControl(id, src) {
                 console.log('点击的按钮', id, src)
             },

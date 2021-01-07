@@ -1,5 +1,12 @@
 <template>
-  <div :style="`height: ${scVideoHeight}; position: relative;`" class="hls-video-content">
+  <div
+          :style="`height: ${scVideoHeight}; position: relative;`"
+          class="hls-video-content"
+          v-loading="loadingVideo"
+          element-loading-text="拼命加载中"
+          element-loading-spinner="el-icon-loading"
+          element-loading-background="rgba(0, 0, 0, 0.8)"
+  >
     <video width="100%" height="100%"
            :class="{'player' : isLive}"
            muted
@@ -14,8 +21,14 @@
            webkit-playsinline
            x5-video-player-typ="h5">
     </video>
+    <div class="error-content" v-if="loadingError">
+      <slot name="errorImg">
+        <!--errorImg-->
+        <img :src="errorImg" alt="errorImg">
+      </slot>
+    </div>
     <div class="video-name" :class="videoNamePosition ? videoNamePosition : 'top'" v-if="videoName && isvVideoName">{{videoName}}</div>
-    <div class="video-controls-content">
+    <div class="video-controls-content" v-if="!isProcess">
       <div class="play-btn">
           <span class="iconfont iconzanting1 pause" @click="videoPause" v-if="!isPause && !isLive && !isProcess"></span>
           <span class="iconfont iconbofang play" v-if="isPause  && !isLive && !isProcess" @click="videoPlay"></span>
@@ -40,6 +53,10 @@
           myPlayer: null,
           videoHls: null,
           isPause: false,//是否是暂停状态
+          loadingVideo: false,
+          loadingError: false,
+          errorImg: require('./bg-no-vedio.png'),
+          videoType: ['mp4', 'ogg']
         }
       },
     props: {
@@ -185,42 +202,63 @@
        * 初始化 video
        */
       initVideo() {
-        console.log('开始初始化')
-        let viodeType = ['mp4', 'ogg']
+         let that = this
+         this.loadingVideo = true
+          console.log(Hls.Events)
+        let viodeType = this.videoType
         //判断是都支持Hls和视频是否为流地址
         if(Hls.isSupported() && viodeType.indexOf(this.scVideoSrc.substring(this.scVideoSrc.lastIndexOf(".") + 1)) == -1) {
           let video = document.getElementById(this.videoId)
           this.videoHls = new Hls()
           this.videoHls.loadSource(this.scVideoSrc)
           this.videoHls.attachMedia(video)
+            this.videoHls.on(Hls.Events.LEVEL_LOADED,function () {
+                console.log('播放中=LEVEL_LOADED======')
+                that.$emit('leaveLoaded')
+            })
           //加载成功
           this.videoHls.on(Hls.Events.MANIFEST_PARSED,function() {
+            that.loadingVideo = false
+            console.log('加载成功')
             if(this.scAutoplay || this.isLive){
               video.play()
-              this.$emit('initSuccess', this.videoHls)
+              that.loadingVideo = false
+              that.loadingError = false
+              that.$emit('initSuccess', this.videoHls)
             }
           })
           //记载失败
           this.videoHls.on(Hls.Events.ERROR, (event, data) => {
             console.log('加载失败')
-            this.$emit('initFail', this.videoHls)
+            that.loadingError = true
+            that.loadingVideo = false
+            that.$emit('initFail', this.videoHls)
           })
         }else {
           let that = this
           that.$refs['video'+that.videoId].src = that.scVideoSrc
           that.$refs['video'+that.videoId].addEventListener('loadedmetadata',function() {
             if(that.scAutoplay){
+                this.loadingVideo = false
+                that.loadingError = false
               that.$refs['video'+that.videoId].play()
             }
           })
-
+          that.loadingVideo = false
         }
+        // this.loadingVideo = false
       },
       /**
        * 销毁video
        */
       destroyHls() {
-        this.videoHls.destroy()
+          if(Hls.isSupported() && this.videoType.indexOf(this.scVideoSrc.substring(this.scVideoSrc.lastIndexOf(".") + 1)) == -1){
+              this.videoHls.destroy()
+          }else {
+              this.$refs['video'+this.videoId].pause()
+          }
+          this.loadingVideo = false
+          this.loadingError = false
       },
       /**
        * 暂停
@@ -244,6 +282,22 @@
   }
 </script>
 <style lang="less" scoped>
+  .error-content{
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    z-index: 100;
+    height: 100%;
+    background-color: #000;
+    display: flex;
+    justify-content:center;
+    align-content:center; //主轴居中对齐
+    align-items:center;
+    img{
+      width: 10%;
+    }
+  }
     .other-btn-item{
         font-size: 12px !important;
     }

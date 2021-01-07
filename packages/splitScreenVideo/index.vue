@@ -6,6 +6,9 @@
         :ref="index"
         :scVideoSrc="item.url"
         scVideoHeight="100%"
+        @initSuccess="initSuccess"
+        @leaveLoaded="initSuccess"
+        @initFail="initFail"
         :scAutoplay="scAutoplay"
         :isLive="isLive"
         :screenShot="screenShot"
@@ -82,23 +85,50 @@
     data (){
       return{
         contentClass: filterSplitClass(this.splitNum),
-        videoData: []
+        videoData: [],
+        count: 0
+      }
+    },
+    watch: {
+      splitNum() {
+          this.count = 0
+        this.$nextTick(() => {
+          // 销毁之前已经存在的
+          this.destroyVideo()
+        })
+        this.contentClass = filterSplitClass(this.splitNum)
+        // this.getVideoData()
+        this.$nextTick(() => {
+          // 从新初始化
+          this.setVideo()
+        })
       }
     },
     mounted () {
     },
     methods: {
+      initSuccess(){
+        this.count++
+          console.log(this.count)
+      },
+      initFail() {
+        console.log('失败的===完成')
+      },
       setVideo() {
         this.getVideoData()
         let that = this
-        this.videoData.forEach((item, index) => {
-          if(item.url){
-            this.$nextTick(() => {
-              // 获取到video组件 init
-              that.$refs[index][0].initVideo()
-            })
-          }
-        })
+          setTimeout(() =>{
+              this.videoData.forEach((item, index) => {
+                  if(item.url){
+                      this.$nextTick(() => {
+                          // 获取到video组件 init
+                          that.$refs[index][0].initVideo()
+                          that.$emit('initSuccess', true)
+                      })
+                  }
+              })
+          },300)
+
       },
       getVideoData () {
          if(this.splitNum <= this.videoList.length) {

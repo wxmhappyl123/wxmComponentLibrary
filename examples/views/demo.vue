@@ -1,22 +1,22 @@
 <template>
-    <div>
-            <div class="">
+    <div :style="'height:'+carouselHeight+'px'">
+        <div class="split-content">
+            <span :class="splitNum == item ? 'active' : ''" v-for="item in splitList" :key="item" @click="checkSplit(item)">{{item}}分屏</span>
+        </div>
+            <div style="height: calc(100% - 50px);">
                 <mySplitScreenVideo
                         ref="splitScreen"
+                        @initSuccess="initSuccess"
                         :videoList="videoList"
-                        :splitNum="9"
+                        :splitNum="splitNum"
                         :btnList="btnList"
-                        :scAutoplay="false"
+                        :scAutoplay="true"
                         :isLive="false"
                         :screenShot="false"
                         videoNamePosition="top"
                         :isProcess="true"
                 ></mySplitScreenVideo>
             </div>
-            <span class="top-left"></span>
-            <span class="top-right"></span>
-            <span class="bottom-left"></span>
-            <span class="bottom-right"></span>
     </div>
 </template>
 <script>
@@ -26,6 +26,7 @@
         },
         data () {
             return{
+                carouselHeight: 0,
                 btnList: [
                     {
                         type: 'cloudControl',
@@ -43,7 +44,7 @@
                 dialogVisible: false,
                 videoList: [
                     {
-                        url: 'http://182.145.195.238:1936/hls/08103021122A63A2A00.m3u8'
+                        url: 'http://182.145.195.238:1936/hls/1010344EFBF7415B800.m3u8'
                     },
                     {
                         url: 'http://182.145.195.238:1936/hls/08103021122A63A2E00.m3u8'
@@ -69,13 +70,23 @@
                     {
                         url: ''
                     },
-                ]
+                ],
+                splitNum: 4,
+                splitList: [1,4,9,16]
             }
         },
         mounted () {
+            const deviceHeight = document.documentElement.clientHeight
+            this.carouselHeight = deviceHeight
             this.openDialog()
         },
         methods: {
+            initSuccess(e) {
+                console.log('初始化成功了-----', e)
+            },
+            checkSplit(item){
+                this.splitNum = item
+            },
             handleClose() {
                 this.$nextTick(() => {
                     console.log(this.$refs.splitScreen)
@@ -93,6 +104,32 @@
     }
 </script>
 <style lang="less" scoped>
+    .split-content{
+        width: calc(95% - 80px);
+        margin-left: 40px;
+        display: flex;
+        justify-content: center;
+        span{
+            display: inline-block;
+            cursor: pointer;
+            background: #1a376e;
+            width: 80px;
+            height: 25px;
+            line-height: 25px;
+            text-align: center;
+            margin-right: 10%;
+            margin-top: 10px;
+            border-radius: 5px;
+            font-size: 12px;
+        }
+        span:last-child{
+            margin-right: 0px;
+        }
+        span.active{
+            background: #0b93d6;
+        }
+        /*text-align: center;*/
+    }
     /deep/.el-dialog{
         background: rgba(8, 34, 88, 0.49);
         position: relative;
